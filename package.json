@@ -1,0 +1,25 @@
+{
+  "dependencies": {
+    "express": "^4.17.1",
+    "morgan": "^1.10.0"
+  },
+  "name": "-boolean-uk-node-hamburger-orders",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ultrahumus9000/boolean-uk-node-hamburger-orders.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ultrahumus9000/boolean-uk-node-hamburger-orders/issues"
+  },
+  "homepage": "https://github.com/ultrahumus9000/boolean-uk-node-hamburger-orders#readme",
+  "description": ""
+}
