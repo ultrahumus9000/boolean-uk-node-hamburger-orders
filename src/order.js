@@ -6,6 +6,23 @@ orderRouter.get("/", (req, res) => {
   res.json(orders);
 });
 
+orderRouter.get("/criticals", (req, res) => {
+  const orders = req.ordesDB;
+  const filteredOrders = orders.filter((order) => {
+    let gap = (Date.now() - order.created_at) / 60000;
+    if (gap >= 10) {
+      return order.status === "pending";
+    } else {
+      return false;
+    }
+  });
+  if (filteredOrders.length > 0) {
+    res.json(filteredOrders);
+  } else {
+    res.json("no pending order");
+  }
+});
+
 orderRouter.post("/", (req, res) => {
   const checkBurgerStock = req.checkBurgerStock;
   let result = checkBurgerStock(req.body);
