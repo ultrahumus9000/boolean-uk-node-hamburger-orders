@@ -1,10 +1,14 @@
+const e = require("express");
 const express = require("express");
 const morgan = require("morgan");
+const burgerRouter = require("./src/hamburger");
+const orderRouter = require("./src/order");
+
 const app = express();
 app.use(morgan("dev"));
 app.use(express.json());
 
-const burgerDB = [
+let burgerDB = [
   {
     id: 8,
     name: "Vegetarian Burger",
@@ -80,25 +84,100 @@ const burgerDB = [
   },
 ];
 
-const ordesDB = [
+let ordesDB = [
   {
     order_id: 1,
     items: [
-      { hamburger_id: 1, quantity: 2 },
-      { hamburger_id: 3, quantity: 1 },
+      { hamburger_id: 9, quantity: 2 },
+      { hamburger_id: 10, quantity: 1 },
     ],
     status: "pending",
     created_at: 1627020599070,
   },
 ];
 
-const checkBurgerStock = () => {};
+const checkBurgerStock = (order) => {
+  let orderDetails = order.items;
+  let conditionCheck = orderDetails.map((order) => {
+    let targetBurger = burgerDB.find((burger) => {
+      return burger.id === order.hamburger_id;
+    });
+    if (targetBurger === undefined) {
+      return "burger ID is wrong";
+    } else if (order.quantity > targetBurger.quantity) {
+      return `availblity ${targetBurger.name} ${
+        targetBurger.quantity - order.quantity
+      }`;
+    } else {
+      return true;
+    }
+  });
+
+  if (conditionCheck.every((result) => result === true)) {
+    return true;
+  } else {
+    let result = conditionCheck.filter((result) => result !== true);
+    return result.toString();
+  }
+};
+
+const addBurgers = (newBurger) => {
+  burgerDB = [...burgerDB, newBurger];
+};
+
+const addOrder = (newOrder) => {
+  ordesDB = [...ordesDB, newOrder];
+};
+
+const deleteOrder = (deleteId) => {
+  let findIndex = ordesDB.findIndex((order) => order.order_id === deleteId);
+  console.log("find index", findIndex);
+  if (findIndex >= 0) {
+    ordesDB = ordesDB.filter((order) => order.order_id !== deleteId);
+    console.log(ordesDB);
+    return "sucecessfully deleted";
+  } else {
+    return "delete id is wrong";
+  }
+};
+
+const updateOrder = (newContent, updateId) => {
+  let originOrder = ordesDB.find((order) => order.order_id === updateId);
+  if (originOrder) {
+    let newOrder = { ...originOrder, ...newContent };
+    let result = checkBurgerStock(newOrder);
+
+    if (result === true) {
+      ordesDB = ordesDB.map((order) => {
+        if (order.order_id === updateId) {
+          return newOrder;
+        } else {
+          return order;
+        }
+      });
+      return newOrder;
+    } else {
+      return "update request is wrong";
+    }
+  } else {
+    return "update id is wrong";
+  }
+};
 
 app.use(function (req, res, next) {
   req.burgerDB = burgerDB;
   req.ordesDB = ordesDB;
+  req.addBurgers = addBurgers;
+  req.checkBurgerStock = checkBurgerStock;
+  req.addOrder = addOrder;
+  req.deleteOrder = deleteOrder;
+  req.updateOrder = updateOrder;
   next();
 });
+
+app.use("/hamburger", burgerRouter);
+app.use("/orders", orderRouter);
+app.use("/order", orderRouter);
 
 app.listen(4000, () => {
   console.log("i am here");
