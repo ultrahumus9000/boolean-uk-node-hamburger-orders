@@ -126,6 +126,12 @@ const addBurgers = (newBurger) => {
 };
 
 const addOrder = (newOrder) => {
+  newOrder = {
+    order_id: Date.now(),
+    ...newOrder,
+    status: "pending",
+    created_at: Date.now(),
+  };
   ordesDB = [...ordesDB, newOrder];
 };
 
