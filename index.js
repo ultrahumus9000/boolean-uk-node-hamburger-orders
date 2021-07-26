@@ -96,9 +96,8 @@ let ordesDB = [
   },
 ];
 
-const checkBurgerStock = (order) => {
-  let orderDetails = order.items;
-  let conditionCheck = orderDetails.map((order) => {
+const checkBurgerStock = (newOrder) => {
+  let conditionCheck = newOrder.map((order) => {
     let targetBurger = burgerDB.find((burger) => {
       return burger.id === order.hamburger_id;
     });
@@ -128,7 +127,7 @@ const addBurgers = (newBurger) => {
 const addOrder = (newOrder) => {
   newOrder = {
     order_id: Date.now(),
-    ...newOrder,
+    items: newOrder,
     status: "pending",
     created_at: Date.now(),
   };
